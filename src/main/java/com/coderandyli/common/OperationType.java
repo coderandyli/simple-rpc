@@ -9,7 +9,6 @@ import com.coderandyli.common.order.OrderOperationResult;
 import java.util.function.Predicate;
 
 public enum OperationType {
-
     AUTH(1, AuthOperation.class, AuthOperationResult.class),
     KEEPALIVE(2, KeepaliveOperation.class, KeepaliveOperationResult.class),
     ORDER(3, OrderOperation.class, OrderOperationResult.class);

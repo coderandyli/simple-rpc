@@ -17,5 +17,9 @@ public class MessageHeader {
      * 操作code
      */
     private int opCode;
+    /**
+     *
+     */
     private long streamId;
+    
 }

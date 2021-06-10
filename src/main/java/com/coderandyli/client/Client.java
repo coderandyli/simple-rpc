@@ -6,4 +6,8 @@ package com.coderandyli.client;
  * @date: 2021-06-07 11:42
  **/
 public class Client {
+
+    public static void main(String[] args) {
+
+    }
 }

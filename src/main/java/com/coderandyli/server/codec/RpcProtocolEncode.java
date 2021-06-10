@@ -12,7 +12,7 @@ import java.util.List;
  * @Date 2021/6/10 3:50 下午
  * @Created by lizhenzhen
  */
-public class ProtocolEncode extends MessageToMessageEncoder<ResponseMessage> {
+public class RpcProtocolEncode extends MessageToMessageEncoder<ResponseMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, ResponseMessage responseMessage, List out) throws Exception {
         // 创建bytebuf，不能使用ByteBufAllocator.DEFAULT.buffer(), 因为堆外内存与堆内切换是就不会生效

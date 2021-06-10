@@ -1,9 +1,10 @@
 package com.coderandyli.server;
 
-import com.coderandyli.server.codec.FrameDecode;
-import com.coderandyli.server.codec.FrameEncode;
-import com.coderandyli.server.codec.ProtocolDecode;
-import com.coderandyli.server.codec.ProtocolEncode;
+import com.coderandyli.server.codec.RpcFrameDecode;
+import com.coderandyli.server.codec.RpcFrameEncode;
+import com.coderandyli.server.codec.RpcProtocolDecode;
+import com.coderandyli.server.codec.RpcProtocolEncode;
+import com.coderandyli.server.handler.RpcServerProcessHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -28,7 +29,7 @@ public class Server {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         // 线程池
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("boss"));
-        NioEventLoopGroup workGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("work"));
+        NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("work"));
         UnorderedThreadPoolEventExecutor businessGroup = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("business")); // 业务处理线程池
 
         ServerBootstrap bootstrap = new ServerBootstrap();
@@ -40,11 +41,14 @@ public class Server {
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                         ChannelPipeline pipeline = nioSocketChannel.pipeline();
 
-                        pipeline.addLast("frameDecoder",new FrameDecode()); // 【入站】
-                        pipeline.addLast("frameDecoder",new FrameEncode()); // 【出站】
-                        pipeline.addLast("protocolDecode",new ProtocolDecode()); // 【入站】
-                        pipeline.addLast("protocolEncode",new ProtocolEncode()); // 【出站】
+                        pipeline.addLast("loggingHandler", new LoggingHandler(LogLevel.DEBUG));
 
+                        pipeline.addLast("frameDecoder",new RpcFrameDecode()); // 【入站】
+                        pipeline.addLast("frameEncoder",new RpcFrameEncode()); // 【出站】
+                        pipeline.addLast("protocolEncode",new RpcProtocolEncode()); // 【出站】
+                        pipeline.addLast("protocolDecode",new RpcProtocolDecode()); // 【入站】
+
+                        pipeline.addLast(businessGroup, new RpcServerProcessHandler()); // 入站
                     }
                 });
         ChannelFuture future = bootstrap.bind(8080).sync();

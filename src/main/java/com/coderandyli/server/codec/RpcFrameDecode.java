@@ -7,11 +7,11 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
  * @Date 2021/6/10 3:40 下午
  * @Created by lizhenzhen
  */
-public class FrameDecode extends LengthFieldBasedFrameDecoder {
+public class RpcFrameDecode extends LengthFieldBasedFrameDecoder {
     /**
      * 解码：解出了一个没有粘包和半包问题的byteBuf
      */
-    public FrameDecode() {
+    public RpcFrameDecode() {
         /**
          * int maxFrameLength：最大长度
          * int lengthFieldOffset：长度字段的位移

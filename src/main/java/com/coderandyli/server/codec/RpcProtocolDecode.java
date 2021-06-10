@@ -14,7 +14,7 @@ import java.util.List;
  * @Date 2021/6/10 3:50 下午
  * @Created by lizhenzhen
  */
-public class ProtocolDecode extends MessageToMessageDecoder<ByteBuf> {
+public class RpcProtocolDecode extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> out) throws Exception {

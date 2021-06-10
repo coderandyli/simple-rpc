@@ -6,9 +6,9 @@ import io.netty.handler.codec.LengthFieldPrepender;
  * @Date 2021/6/10 3:42 下午
  * @Created by lizhenzhen
  */
-public class FrameEncode extends LengthFieldPrepender {
+public class RpcFrameEncode extends LengthFieldPrepender {
 
-    public FrameEncode() {
+    public RpcFrameEncode() {
         super(2);
     }
 

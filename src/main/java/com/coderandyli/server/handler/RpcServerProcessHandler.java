@@ -25,8 +25,8 @@ public class RpcServerProcessHandler extends SimpleChannelInboundHandler<Request
         responseMessage.setMessageHeader(requestMessage.getMessageHeader());
         responseMessage.setMessageBody(operationResult);
 
-        if (ctx.channel().isWritable() && ctx.channel().isWritable()){
-            ctx.writeAndFlush(requestMessage);
+        if (ctx.channel().isActive() && ctx.channel().isWritable()){
+            ctx.writeAndFlush(responseMessage);
         }else {
             log.error("not writable now, message dropped");
         }

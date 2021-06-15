@@ -36,6 +36,7 @@ public class Server {
         bootstrap.channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .group(bossGroup, workGroup)
+                .handler(new LoggingHandler(LogLevel.INFO)) // 为NioServerSocketChannel添加 ChannelHandler
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {

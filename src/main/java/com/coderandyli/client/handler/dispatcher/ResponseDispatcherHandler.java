@@ -1,6 +1,5 @@
 package com.coderandyli.client.handler.dispatcher;
 
-import com.coderandyli.common.MessageHeader;
 import com.coderandyli.common.ResponseMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

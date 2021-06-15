@@ -5,6 +5,7 @@ import com.coderandyli.server.codec.RpcFrameEncode;
 import com.coderandyli.server.codec.RpcProtocolDecode;
 import com.coderandyli.server.codec.RpcProtocolEncode;
 import com.coderandyli.server.handler.RpcServerProcessHandler;
+import com.coderandyli.server.handler.ServerIdleCheckHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -43,6 +44,8 @@ public class Server {
                         ChannelPipeline pipeline = nioSocketChannel.pipeline();
 
                         pipeline.addLast("loggingHandler", new LoggingHandler(LogLevel.DEBUG));
+
+                        pipeline.addLast("idleHandler", new ServerIdleCheckHandler());
 
                         pipeline.addLast("frameDecoder",new RpcFrameDecode()); // 【入站】
                         pipeline.addLast("frameEncoder",new RpcFrameEncode()); // 【出站】

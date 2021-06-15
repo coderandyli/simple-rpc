@@ -4,6 +4,8 @@ import com.coderandyli.client.codec.RpcFrameDecode;
 import com.coderandyli.client.codec.RpcFrameEncode;
 import com.coderandyli.client.codec.RpcProtocolDecode;
 import com.coderandyli.client.codec.RpcProtocolEncode;
+import com.coderandyli.client.handler.ClientIdleCheckHandler;
+import com.coderandyli.client.handler.KeepaliveHandler;
 import com.coderandyli.client.handler.dispatcher.OperationResultFuture;
 import com.coderandyli.client.handler.dispatcher.RequestPendingCenter;
 import com.coderandyli.client.handler.dispatcher.ResponseDispatcherHandler;
@@ -32,13 +34,13 @@ public class Client {
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
-
+        KeepaliveHandler keepaliveHandler = new KeepaliveHandler();
         RequestPendingCenter requestPendingCenter = new RequestPendingCenter();
 
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.channel(NioSocketChannel.class)
                 .group(new NioEventLoopGroup())
-                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
@@ -46,14 +48,16 @@ public class Client {
 
                         pipeline.addLast(loggingHandler);
 
-                        pipeline.addLast(new RpcFrameDecode()); // 入站
-                        pipeline.addLast(new RpcFrameEncode()); // 出站
-                        pipeline.addLast(new RpcProtocolEncode()); // 出站
-                        pipeline.addLast(new RpcProtocolDecode()); // 入站
+                        pipeline.addLast("clientIdleCheck", new ClientIdleCheckHandler()); // 入站
 
-                        pipeline.addLast(new ResponseDispatcherHandler(requestPendingCenter));
+                        pipeline.addLast("frameDecode", new RpcFrameDecode()); // 入站
+                        pipeline.addLast("frameEncode", new RpcFrameEncode()); // 出站
+                        pipeline.addLast("protocolEncode", new RpcProtocolEncode()); // 出站
+                        pipeline.addLast("protocolDecode", new RpcProtocolDecode()); // 入站
 
-                        pipeline.addLast(new LoggingHandler(LogLevel.INFO)); // 日志
+                        pipeline.addLast("requestPendCenter", new ResponseDispatcherHandler(requestPendingCenter));
+
+                        pipeline.addLast("keepalive" ,keepaliveHandler);
                     }
                 });
         ChannelFuture f = bootstrap.connect("127.0.0.1", 8080).sync();
